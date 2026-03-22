@@ -1,6 +1,6 @@
 cask "vaulthound" do
   version "1.0.0"
-  sha256 "PLACEHOLDER"
+  sha256 "02c051a2e0e06109646583c416320d826a617d1e47c8c317fe23c04cd536c8e1"
 
   url "https://github.com/tylergibbs1/vaulthound/releases/download/v#{version}/Vaulthound-macOS.zip"
   name "Vaulthound"
