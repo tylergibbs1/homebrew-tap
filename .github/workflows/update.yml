@@ -1,0 +1,39 @@
+name: Update Formulas
+
+on:
+  repository_dispatch:
+    types: [update-formula]
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update cask
+        run: |
+          VERSION="${{ github.event.client_payload.version }}"
+          APP_SHA="${{ github.event.client_payload.app_sha }}"
+
+          sed -i "s/version \".*\"/version \"${VERSION}\"/" Casks/vaulthound.rb
+          sed -i "s/sha256 \".*\"/sha256 \"${APP_SHA}\"/" Casks/vaulthound.rb
+
+      - name: Update formula
+        run: |
+          VERSION="${{ github.event.client_payload.version }}"
+          CLI_SHA="${{ github.event.client_payload.cli_sha }}"
+
+          sed -i "s|url \".*\"|url \"https://github.com/tylergibbs1/vaulthound/releases/download/v${VERSION}/vaulthound-cli-macOS.tar.gz\"|" Formula/vaulthound-cli.rb
+          sed -i "s/sha256 \".*\"/sha256 \"${CLI_SHA}\"/" Formula/vaulthound-cli.rb
+          sed -i "s/version \".*\"/version \"${VERSION}\"/" Formula/vaulthound-cli.rb
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Update to v${{ github.event.client_payload.version }}"
+          git push
